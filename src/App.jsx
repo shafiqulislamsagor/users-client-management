@@ -1,33 +1,49 @@
+
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
+import { useEffect } from 'react'
 
 function App() {
-  const [count, setCount] = useState(0)
-
+  const [users, setUsers] = useState([])
+  useEffect(() => {
+    fetch('http://localhost:5000/users')
+      .then(res => res.json())
+      .then(data => setUsers(data))
+  }, [])
+  const fromHandle = event => {
+    event.preventDefault()
+    const from = event.target;
+    const name = from.name.value
+    const email = from.email.value
+    const user = { name, email }
+    console.log(user);
+    fetch('http://localhost:5000/users', {
+      method: 'POST',
+      headers:{
+        "Content-type":"application/json"
+      },
+      body:JSON.stringify(user)
+    })
+      .then(res => res.json())
+      .then(data => console.log(data))
+  }
+  // console.log(users);
   return (
     <>
+      <h2>Users Client Management</h2>
+      <h2>Users Length : {users.length}</h2>
+      <form onSubmit={fromHandle}>
+        <input type="text" name="name" id="name" />
+        <br />
+        <input type="email" name="email" id="email" />
+        <br />
+        <input type="submit" value="Added" />
+      </form>
       <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+        {
+          users.map(user => <h2 key={user.id}>id: {user.id} name: {user.name} email: {user.email}</h2>)
+        }
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
     </>
   )
 }
