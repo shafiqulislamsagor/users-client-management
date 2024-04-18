@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 
 import { useState } from 'react'
 import './App.css'
@@ -19,13 +20,20 @@ function App() {
     console.log(user);
     fetch('http://localhost:5000/users', {
       method: 'POST',
-      headers:{
-        "Content-type":"application/json"
+      headers: {
+        "Content-type": "application/json"
       },
-      body:JSON.stringify(user)
+      body: JSON.stringify(user)
     })
       .then(res => res.json())
-      .then(data => console.log(data))
+      .then(data => {
+        const newUser = {...users,data}
+        setUsers(newUser)
+        console.log(user);
+        console.log(data);
+        console.log(newUser);
+        from.reset()
+      } )
   }
   // console.log(users);
   return (
